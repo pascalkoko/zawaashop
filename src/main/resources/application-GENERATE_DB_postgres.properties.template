@@ -1,0 +1,89 @@
+#
+#
+# Configuration for generating the DB model out of the Entity objects.
+#
+
+
+# *****************************************************
+# EMPTY DB MUST BE AVAILABLE (RUNNING DOCKER CONTAINER)
+# *****************************************************
+#
+
+
+# 
+# CORE PROPERTIES
+# 
+# Enable debug logs. Default is false
+#debug=false
+# Enable trace logs. Default is false
+#trace=false
+
+
+#
+# LOGGING
+#
+# log in this path in working dir
+logging.file=/tmp/mobilmoneyLogs/generateDB.log
+# default log level: INFO
+# but one can select another log level: FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+# applicable for specified loggers
+#logging.level.cd.ac.uea.depot.DepotApplication=TRACE
+#logging.level.cd.ac.uea.depot.DepotController=DEBUG
+#logging.level.cd.ac.uea.depot=INFO
+
+#This works for stdout too:
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.use_sql_comments=true
+spring.jpa.properties.hibernate.format_sql=true
+#To log values:
+spring.jpa.properties.hibernate.type=trace 
+
+
+
+# perhaps better solution here: https://stackoverflow.com/questions/59532496/how-to-set-flyway-migration-file-location-using-spring-profiles
+#spring.flyway.locations=classpath:db/migration/{vendor}
+#spring.flyway.locations=classpath:db/migration/postgres
+## disable Flyway migration scripts
+spring.flyway.enabled=false
+
+####
+#### Docker-Postgres on localhost
+####
+###   PostgresSQL simple configuration:
+###   https://mkyong.com/spring-boot/spring-boot-spring-data-jpa-postgresql/
+### default connection pool
+#spring.datasource.hikari.connectionTimeout=20000
+#spring.datasource.hikari.maximumPoolSize=5
+### PostgreSQL
+spring.datasource.username=postgres
+spring.datasource.password=xxxxxx
+## generate new DB
+spring.datasource.url=jdbc:postgresql://localhost:5433/ZawaaShopDBSetup
+
+# drop n create table again, good for testing, comment this in production
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.generate-ddl=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect
+spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+spring.jpa.hibernate.naming.physical-strategy= org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.properties.hibernate.globally_quoted_identifiers=true
+
+
+
+
+#####   PostgresSQL comprehensive configuratio
+#####   https://zetcode.com/springboot/postgresql/
+##### To load a database that is not embedded, in Spring Boot 2 we need to add spring.sql.init.mode
+##### (depricated: spring.datasource.initialization-mode=always). 
+#spring.sql.init.mode=always
+##### spring.sql.init.platform (depricated: spring.datasource.platform)
+#spring.sql.init.platform=postgres
+#spring.datasource.url=jdbc:postgresql://localhost:5432/ZawaaShopDB
+#spring.datasource.username=postgres
+#spring.datasource.password=xxxxxx
+#####To avoid conflicts, we turn off automatic schema creation with spring.jpa.hibernate.ddl-auto=none.
+#spring.jpa.hibernate.ddl-auto=update
+##### The spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation option is set avoid a recent issue.
+#####Without this option, we get the following error:
+#####   java.sql.SQLFeatureNotSupportedException: Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
+#spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
